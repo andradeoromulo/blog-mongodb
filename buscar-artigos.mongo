@@ -1,0 +1,32 @@
+// Retorna o documento inteiro de um autor que tenha um artigo com essa slug
+db.autores.find({
+    "artigos.slug": "projeto-caelum-nas-faculdades"
+})
+
+// Filtra o retorno para somente título e conteúdo dos artigos
+db.autores.find(
+    {
+        "artigos.slug": "projeto-caelum-nas-faculdades"
+    },
+    {
+        "artigos.titulo": 1,
+        "artigos.conteudo": 1
+    }
+)
+
+// Basicamente mesma query acima, mas buscando um autor
+db.autores.find(
+    {
+        "nome": "Gabriel Ferreira"
+    },
+    {
+        "artigos.titulo": 1,
+        "artigos.conteudo": 1
+    }
+)
+
+/* Entretanto, percebemos que o retorno, mesmo estando interessados
+em artigos, está atrelado aos autores. Inclusive estamos fazendo
+a busca na collection de autores, mas o que estamos querendo são artigos!
+Nesse caso, precisaremos rever a modelagem, pois devemos fazê-la de acordo com 
+as operações que serão mais comuns em nossa base. */
