@@ -1,3 +1,4 @@
+// Estrutura inical (posteriormente modificada)
 db.autores.update({nome: "Gabriel Ferreira"}, { $set: {
     artigos: [
         {

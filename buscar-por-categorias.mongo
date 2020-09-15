@@ -1,0 +1,4 @@
+// Buscando por uma categoria e trazendo também os status da consulta
+db.artigos.find({
+    categorias: "Programação"
+}).explain("executionStats")

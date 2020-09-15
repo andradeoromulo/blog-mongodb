@@ -39,3 +39,14 @@ categorias: ["Modelagem", "Paradigmas", "Programação"] }
 db.artigos.updateOne({ slug: "seu-repositorio-sabe-tudo-sobre-seu-projeto"}, { $set: {
     categorias: ["Java", "Programação", "Arquitetura"] }
 })
+
+db.artigos.updateOne(
+    { 
+        slug: "projeto-caelum-nas-faculdades"
+    },
+    {
+        $set: {
+            categorias: ["Inovação"]
+        }
+    }
+)

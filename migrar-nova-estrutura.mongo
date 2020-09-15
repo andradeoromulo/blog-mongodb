@@ -27,3 +27,6 @@ db.autores.aggregate([
         $out: "artigos"
     }
 ])
+
+// Excluindo a estrutura inicial 
+db.autores.drop()
