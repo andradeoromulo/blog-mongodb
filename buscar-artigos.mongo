@@ -29,4 +29,10 @@ db.autores.find(
 em artigos, está atrelado aos autores. Inclusive estamos fazendo
 a busca na collection de autores, mas o que estamos querendo são artigos!
 Nesse caso, precisaremos rever a modelagem, pois devemos fazê-la de acordo com 
-as operações que serão mais comuns em nossa base. */
+as operações que serão mais comuns em nossa base. 
+Agora, a nossa collection de artigos com subdocumento de autor. */
+
+// Com a nova estrutura, podemso buscar artigos mais facilmente
+db.artigos.find({
+    "slug": "projeto-caelum-nas-faculdades"
+})

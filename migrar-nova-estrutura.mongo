@@ -1,0 +1,29 @@
+/* Aqui, migramos todos os dados anteriormente guardados em 
+autores para a collection de artigos. Para isso, utilizamos o unwind para
+expor os dados do array de artigos, depois usamos o project para
+estruturar esses dados de acordo com a nova modelagem, e, por fim,
+jogamos os dados para a collection de artigos. Vale a pena evidenciar que
+o out não adiciona os dados na collection, mas substitui tudo que tiver
+dentro dela por esses dados */
+
+db.autores.aggregate([
+    {
+        $unwind: "$artigos"
+    },
+    {
+        $project: {
+            _id: 0, // excluindo o id gerado pelo unwind para evitar duplicações
+            "autor.nome": "$nome",
+            "autor.descricao": "$descricao",
+            "autor.email": "$email",
+            "autor.senha": "$senha",
+            slug: "$artigos.slug",
+            titulo: "$artigos.titulo",
+            conteudo: "$artigos.conteudo",
+            dataCriado: "$artigos.dataCriado"
+        }
+    },
+    {
+        $out: "artigos"
+    }
+])
