@@ -2,3 +2,22 @@
 db.artigos.find({
     categorias: "Programação"
 }).explain("executionStats")
+
+/* Se analizarmos os status retornados na query anterior,
+perceberemos que o mongo está fazendo um collscan e analisando
+todos os documentos existentes na nossa collection e retornando
+somente os correspondentes. No entanto, essa consulta pode ser 
+otimizada com a criação de índices. */
+db.artigos.createIndex({
+    categorias: 1
+})
+
+/* Agora, o status retorna que a query fez um FETCH após
+um IXSCAN, isto é, através da busca dos índices. Ao invés
+de percorrer todos os documentos, ele só passou pelos
+documentos correspondentes. */
+db.artigos.getIndexes()
+
+/* Vemos que temos dois índices, um padrão, ligado ao
+_id e outro que acabamos de adicionar */
+ db.artigos.dropIndex('') // basta inserir o nome do indice no parametro  (conseguido no comando anterior)

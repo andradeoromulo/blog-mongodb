@@ -1,0 +1,12 @@
+/* Se adicionarmos um índice à key de slug por exemplo,
+não queremos ter documentos com duas slugs iguais, pois 
+isso geraria erro. Nesses casos, nós utilizamos índices 
+únicos, que impedem itens duplicados. */
+db.artigos.createIndex(
+    {
+        slug: 1
+    },
+    {
+        unique: true
+    }
+)
