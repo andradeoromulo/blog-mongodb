@@ -1,0 +1,27 @@
+/* Agora que temos informações de autores em documentos separados, mas, ao
+mesmo tempo, temos informações duplicadas nos documentos de artigos, se quisermos
+atualizar alguma dessas informações, devemos atualizar em ambas as collections. */
+db.infoAutores.update(
+    {
+        "nome": "Gabriel Ferreira"
+    },
+    {
+        $set: {
+            "nome": "Gabs Ferreira"
+        }
+    }
+)
+
+db.artigos.update(
+    {
+        "autor.nome": "Gabriel Ferreira"
+    },
+    {
+        $set: {
+            "autor.nome": "Gabs Ferreira"
+        }
+    },
+    {
+        multi: true
+    }
+)

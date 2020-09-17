@@ -1,0 +1,40 @@
+/* Para evitar que os documentos de artigos trafeguem com dados sigilosos
+sobre o autor, e para que as informações do autor existam independentes 
+dos artigos, vamos criar uma collection de autores puxando os dados dos artigos.
+Para isso, podemos usar o framework aggregate, e agrupar os resultados com o operador
+grupo a partir do email. Como temos um agrupamento, para selecionar as informações de cada
+autor, podemos usar o operador first para pegar no primeiro bloco de cada um dos grupos. */
+db.artigos.aggregate([
+    {
+        $group: {
+            _id: "$autor.email",
+            nome: { $first: "$autor.nome" },
+            email: { $first: "$autor.email" },
+            descricao: { $first: "autor.descricao" },
+            senha: { $first: "$autor.senha" }
+        }
+    },
+    {
+        "$project": {
+            _id: 0
+        }
+    },
+    {
+        $out: "infoAutores"
+    }
+])
+
+/* Agora, precisamos apagar o email e senha que não queremos mais 
+que exista nos documentos de artigos. Além disso, precisamos armazenar
+o id para o documento daquele autor. Para realizar isso tudo, podemos
+usar uma função em JavaScript. */
+db.artigos.find({}).forEach(function(artigo) {
+    const infoAutor = db.infoAutores.findOne({ email: artigo.autor.email});
+
+    artigo.autor.id_info = infoAutor._id;
+
+    delete artigo.autor.email;
+    delete artigo.autor.senha;
+
+    db.artigos.save(artigo);
+})
