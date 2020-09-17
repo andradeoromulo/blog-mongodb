@@ -1,0 +1,58 @@
+/* Comentários serão armazenados como um array de objetos
+dentro dos documentos de artigos */
+db.artigos.update(
+    {},
+    {
+        $set: {
+            comentarios: []
+        }
+    },
+    {
+        multi: true
+    }
+)
+
+/* No entanto, isso pode ser o problema caso um artigo tenha
+um número muito absurdo de comentários e queiramos carregar só
+os comentário mais recentes primeiro e, caso o usuário decida, 
+possa carregar todos os outros. Para isso, vamos armazenar só os 
+5 comentários mais recentes no documento de artigos e todos os outros
+serão armazenadas em uma collection de comentários. */
+db.artigos.aggregate([
+    {
+        $unwind: "$comentarios"
+    },
+    {
+        $project: {
+            _id: 0,
+            id_artigo: "$_id",
+            nome: "$comentarios.nome",
+            email: "$comentarios.email",
+            texto: "$comentarios.texto",
+            data: "$comentarios.data"
+        }
+    },
+    {
+        $out: "comentarios"
+    }
+])
+
+/* Agora, precisamos deixar somente os 5 comentários mais recentes
+nos documentos de artigos. */
+db.artigos.find(
+    {  
+        comentarios: {
+            $exists: true
+        }
+    }
+).forEach(function(artigo) {
+
+    artigo.comentarios = db.comentarios.find(
+        { id_artigo: artigo._id },
+        {
+            _id: 0
+        }
+    ).sort({ data: -1 }).limit(5).toArray();
+
+    db.artigos.save(artigo);
+})

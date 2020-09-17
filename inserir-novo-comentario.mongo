@@ -1,0 +1,50 @@
+/* Quando adicionamos um novo comentário,
+precisamos liberar um espaço nos 5 comentários mais
+recentes no documento de artigo. */
+db.artigos.update(
+    {
+        slug: "visualizando-dados-de-frequencia"
+    },
+    {
+        $pop: {
+            comentarios: 1
+        }
+    }
+)
+
+/* Agora, adicionamos o comentário no topo dos mais
+recentes no documento de artigos e também no documento
+de comentários. */
+let artigo = db.artigos.findOneAndUpdate(
+    {
+        slug: "visualizando-dados-de-frequencia"
+    },
+    {
+        $push: {
+            comentarios: {
+                $each: [
+                    {
+                        nome: "Rogerinho",
+                        email: "rogerinho@transportealternativo.com.br",
+                        texto: "Pensou que tinha acabado?",
+                        data: ISODate('2019-09-24')
+                    }
+                ],
+                $position: 0
+            }
+        }
+    },
+    {
+        returnNewDocument: true
+    }
+)
+
+db.comentarios.insertOne(
+    {
+        id_artigo: artigo._id,
+        nome: artigo.comentarios[0].nome,
+        email: artigo.comentarios[0].email,
+        texto: artigo.comentarios[0].texto,
+        data: artigo.comentarios[0].data
+    }
+)

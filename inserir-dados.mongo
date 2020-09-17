@@ -1,0 +1,57 @@
+// Exemplo de inserção de autor, artigo e comentário
+db.infoAutores.insertOne({
+    nome: "Paulo Silveira",
+    email: "paulo@alura.com.br",
+    senha: "hipstersupremo",
+    descricao: "CEO da Alura"
+})
+
+let autorInfo = db.infoAutores.findOne( { email: "paulo@alura.com.br" });
+
+db.artigos.insertOne({
+    autor: {
+        autor: autorInfo.nome,
+        descricao: autorInfo.descricao,
+        id_info: autorInfo._id
+    },
+    slug: "dicas-dev-em-t",
+    titulo: "Algumas dicas importantes sobre carreira tech",
+    conteudo: "A Imersão Carreira Tech traz 12 lives com mais de 20 experts com carreiras incríveis em tecnologia, compartilhando como chegaram lá!",
+    data: ISODate('2020-09-17'),
+    categorias: ['Carreira'],
+    comentarios: []
+})
+
+let artigo = db.artigos.findOneAndUpdate(
+    {
+        slug: "dicas-dev-em-t"
+    },
+    {
+        $push: {
+            comentarios: {
+                $each: [
+                    {
+                        nome: "Rômulo",
+                        email: "romulo@alura.com.br",
+                        texto: "Imersão super bacana",
+                        data: ISODate('2019-09-24')
+                    }
+                ],
+                $position: 0
+            }
+        }
+    },
+    {
+        returnNewDocument: true
+    }
+)
+
+db.comentarios.insertOne(
+    {
+        id_artigo: artigo._id,
+        nome: artigo.comentarios[0].nome,
+        email: artigo.comentarios[0].email,
+        texto: artigo.comentarios[0].texto,
+        data: artigo.comentarios[0].data
+    }
+)
